@@ -30,6 +30,29 @@
 	.ly-pad-tb-4{
 		padding: 4px 0;
 	}
+	.ly-text-captilize{
+		text-transform: capitalize;
+	}
+	.ly-event-bg-color{
+		background-color: #c2ebf1;
+	}
+	.ly-event{
+	    border-radius: 3px;
+	    padding: 2px;
+	    font-size: 12px;
+	}
+	.ly-hover-underline:hover{
+		text-decoration: underline;
+		cursor: pointer;
+	}
+
+	.ly-cursor-ponter{
+		cursor: pointer;
+	}
+
+	.ly-color-light-grey{
+		color: #c1c0c0;
+	}
 
 	.ly-f-16{
 		font-size: 16px;

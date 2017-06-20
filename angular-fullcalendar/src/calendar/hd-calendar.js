@@ -56,8 +56,9 @@
 						month : 'Month',
 						day : 'Day',
 						week : 'Week',
-						list : 'List'
+						//list : 'List'
 					},
+					eventAdd : [],
 				};
 
 				angular.extend(ctrl, {
@@ -71,6 +72,9 @@
 					today : _default.today,
 					dayHeading : getDayOfDate(_default.viewMonth, _default.viewDate),
 					dayTimeData : getDayTimeData(),
+					gotoDaysView : updateViewOnDay,
+					addEvent : addUserEvent,
+					eventEdit : editEvent,
 					leftbtnAction : function (dir) {
 						
 						if(dir == 'next'){
@@ -103,9 +107,11 @@
 							_default[key] = val;
 						});
 					}
+					provideEventData();
 					renderHeadLeftSection();
 					renderHeadRightSection();
 					renderDateSkeletonTable('Month');
+
 				}
 
 				function currentMonthDayHeading(agenda){
@@ -189,12 +195,12 @@
 					var heightOfBox = '70px';//parseInt(100/(_default.weeks.length)) + '%';
 					var widthOfBox = parseInt(100/(_default.weeks.length)) + '%';
 					var boxHTML = '<div class="week">'+
-									'<div class="ly-inline-block ly-boder" ng-repeat="date in ctrl.monthDaysData track by $index" '+
-										'ng-class="(ctrl.today == date && ctrl.isCurrMonth) ? \'ly-highlight-today\' : \' \'"  style="height:'+heightOfBox+';width:'+widthOfBox+'">'+
+									'<div ng-click="ctrl.addEvent(date.date)" class="ly-inline-block ly-cursor-ponter ly-boder" ng-repeat="date in ctrl.monthDaysData track by $index" '+
+										'ng-class="(ctrl.today == date.date && ctrl.isCurrMonth) ? \'ly-highlight-today\' : \' \'"  style="height:'+heightOfBox+';width:'+widthOfBox+'">'+
 										'<div class="week__day-number date-{{$index}} text-end">'+
-											'<span ng-click="ctrl.gotoDaysView(week)">{{date}}</span>'
+											'<span class="ly-hover-underline" ng-class="date.isViewMonthDate ? \'\': \'ly-color-light-grey\'" ng-click="ctrl.gotoDaysView(date.date)">{{date.date}}</span>'+
 										'</div>'+
-										'<div class="week__day-content"></div>'+
+										'<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize" ng-repeat="event in date.event" ng-class="event.value ? \'ly-event-bg-color ly-event\' : \'\'"><span>{{event.value}}</span></div>'+
 									'</div>'+
 								'</div>';
 					return boxHTML;
@@ -209,15 +215,35 @@
 					var noOfDaysInPrevMonth = moment().month(prevMonth).daysInMonth();
 					var day = 1;
 					for(var i=0; i<_default.numberOfBoxMonth; i++){
+						var dateObj = {
+							date : null,
+							isViewMonthDate : true,
+						};
 						if((startDayOfCurrMonth <= i) && (day <= daysInCurrMonth)){
-							dayArr[i] = day;
+							dateObj = {
+								date : 	day,
+								isViewMonthDate : true,
+								event : _default.eventAdd[day]
+							};
+							dayArr[i] = dateObj;
 							if(day++ && (day > daysInCurrMonth)){
 								day = i;
 							}
 						}else if(i < startDayOfCurrMonth){
-							dayArr[startDayOfCurrMonth - i - 1] = noOfDaysInPrevMonth--;
+							var datePrev = noOfDaysInPrevMonth--
+							dateObj = {
+								date : datePrev,
+								isViewMonthDate : false,
+								event : _default.eventAdd[datePrev]
+							};
+							dayArr[startDayOfCurrMonth - i - 1] = dateObj;
 						}else {
-							dayArr[i] = i - day;
+							dateObj = {
+								date : 	(i - day),
+								isViewMonthDate : false,
+								event : _default.eventAdd[(i - day)]
+							};
+							dayArr[i] = dateObj;
 						}
 					}
 
@@ -301,6 +327,12 @@
 					return dayTime;
 				}
 
+				function updateViewOnDay(date) {
+					console.log(date);
+					_default.viewDate = date;
+					//ctrl.isActivePeriod = "Day";
+					ctrl.rightBtnAction("Day")
+				}
 
 				function setEndHrs(hrs){
 					if(hrs.toString() == '00'){
@@ -479,6 +511,32 @@
 										'</div>'+
 									'</div>';
 					return template;
+				}
+
+
+				// This section add Event in view
+				function addUserEvent(date, month, $event) {
+					var message = "Please enter event title";
+					var result = window.prompt(message, "e.g meeting..");
+					if(!_default.eventAdd[date]){
+						_default.eventAdd[date] = [];
+					}
+					_default.eventAdd[date].push({
+						date : date,
+						value : result,
+					});
+				}
+
+				function provideEventData() {
+					_default.eventAdd[20] = [{
+						date : 20,
+						value : "good day",
+					}];
+				}
+
+				function editEvent(event, e) {
+					e.stopPropagation();
+					console.log(event);
 				}
 			}
 		}

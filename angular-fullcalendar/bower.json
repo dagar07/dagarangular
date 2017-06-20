@@ -1,0 +1,18 @@
+{
+  "name": "angular-fullcalendar",
+  "description": "\"angular full calendar js\"",
+  "main": "index.js",
+  "authors": [
+    "\"dagar\""
+  ],
+  "license": "\"IDS\"",
+  "keywords": [
+    "\"noon\""
+  ],
+  "homepage": "",
+  "private": true,
+  "dependencies": {
+    "angular": "^1.6.4",
+    "moment": "^2.18.1"
+  }
+}

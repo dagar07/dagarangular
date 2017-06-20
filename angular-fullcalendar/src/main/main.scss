@@ -1,0 +1,7 @@
+@import "../sass/bem-mixins";
+
+@include block('ly-main'){
+	width: 50%;
+	margin: 10px auto;
+	text-align: center;
+}

@@ -1,0 +1,97 @@
+/*allows us to write css in BEM style
+* @see http://www.sassmeister.com/gist/6dac17c87fcf2d1555c4
+*/
+.ly-cal {
+  font-size: 14px;
+  text-align: start; }
+  .ly-cal h2 {
+    display: inline-block;
+    margin: 0;
+    font-size: 22px; }
+  .ly-cal button {
+    box-sizing: border-box;
+    margin: 0;
+    height: 2.1em;
+    padding: 0 .6em;
+    font-size: 1em;
+    white-space: nowrap;
+    cursor: pointer; }
+  .ly-cal .ly-inline-block {
+    display: inline-block; }
+  .ly-cal .ly-highlight-today {
+    background-color: #FFE699; }
+  .ly-cal .ly-pad-tb-4 {
+    padding: 4px 0; }
+  .ly-cal .ly-f-16 {
+    font-size: 16px; }
+  .ly-cal .col-w-10 {
+    width: 10%; }
+  .ly-cal .col-w-15 {
+    width: 15%; }
+  .ly-cal .col-w-20 {
+    width: 20%; }
+  .ly-cal .col-w-25 {
+    width: 25%; }
+  .ly-cal .col-w-30 {
+    width: 30%; }
+  .ly-cal .col-w-35 {
+    width: 35%; }
+  .ly-cal .col-w-40 {
+    width: 40%; }
+  .ly-cal .col-w-45 {
+    width: 45%; }
+  .ly-cal .col-w-50 {
+    width: 50%; }
+  .ly-cal .col-w-55 {
+    width: 55%; }
+  .ly-cal .col-w-60 {
+    width: 60%; }
+  .ly-cal .col-w-65 {
+    width: 65%; }
+  .ly-cal .col-w-80 {
+    width: 80%; }
+  .ly-cal .col-w-90 {
+    width: 90%; }
+  .ly-cal .col-w-100 {
+    width: 100%; }
+  .ly-cal .f-left {
+    float: left; }
+  .ly-cal .f-right {
+    float: right; }
+  .ly-cal .text-center {
+    text-align: center; }
+  .ly-cal .text-end {
+    text-align: end; }
+  .ly-cal .ly-boder {
+    border: 1px solid #eee; }
+  .ly-cal .ly-border-r {
+    border-right: 1px solid #eee; }
+  .ly-cal .ly-border-b {
+    border-bottom: 1px solid #eee; }
+  .ly-cal .ly-border-t, .ly-cal .ly-border-dotted-top {
+    border-top: 1px solid #eee; }
+  .ly-cal .ly-border-dotbtm {
+    border-bottom: 1px dotted #eee; }
+  .ly-cal .ly-border-dotted-top {
+    border-top-style: dotted; }
+  .ly-cal .btn-icon, .ly-cal .prev-icon:after, .ly-cal .next-icon:after {
+    font-weight: bold;
+    font-size: 200%;
+    top: -7%; }
+  .ly-cal .btn-active {
+    background-color: #cccccc; }
+  .ly-cal .btn-icon-mid, .ly-cal .prev-icon, .ly-cal .next-icon {
+    position: relative;
+    top: -0.05em;
+    margin: 0 .2em;
+    vertical-align: middle; }
+  .ly-cal .prev-icon {
+    top: -0.3em; }
+    .ly-cal .prev-icon:after {
+      content: "\02039"; }
+  .ly-cal .next-icon {
+    top: -0.3em; }
+    .ly-cal .next-icon:after {
+      content: "\0203A"; }
+  .ly-cal__body {
+    margin-top: 16px; }

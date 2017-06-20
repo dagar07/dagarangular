@@ -1,0 +1,26 @@
+{
+  "name": "angular-fullcalendar",
+  "version": "1.0.0",
+  "description": "\"angular full calendar js\"",
+  "main": "index.js",
+  "scripts": {
+    "cal": "gulp runCalGulp"
+  },
+  "repository": {
+    "type": "git",
+    "url": "\"noon\""
+  },
+  "keywords": [
+    "\"noon\""
+  ],
+  "author": "\"dagar\"",
+  "license": "ISC",
+  "dependencies": {
+    "browserify": "^14.4.0",
+    "gulp": "^3.9.1",
+    "gulp-concat": "^2.6.1",
+    "gulp-sass": "^3.1.0",
+    "run-sequence": "^1.2.2",
+    "vinyl-source-stream": "^1.1.0"
+  }
+}

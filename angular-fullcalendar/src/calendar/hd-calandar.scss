@@ -1,0 +1,161 @@
+@import "../sass/bem-mixins";
+
+@include block('ly-cal'){
+	
+	font-size : 14px;
+	text-align: start;
+	h2{
+		display: inline-block;
+		margin: 0;
+	    font-size: 22px;
+	}
+	
+	button{
+	    box-sizing: border-box;
+	    margin: 0;
+	    height: 2.1em;
+	    padding: 0 .6em;
+	    font-size: 1em;
+	    white-space: nowrap;
+	    cursor: pointer;
+	}
+
+	.ly-inline-block{
+		display: inline-block;
+	}
+
+	.ly-highlight-today{
+	    background-color: #FFE699;
+	}
+	.ly-pad-tb-4{
+		padding: 4px 0;
+	}
+
+	.ly-f-16{
+		font-size: 16px;
+	}
+	.col-w-10{
+		width: 10%;
+	}
+	.col-w-15{
+		width: 15%;
+	}
+	.col-w-20{
+		width: 20%;
+	}
+	.col-w-25{
+		width: 25%;
+	}
+	.col-w-30{
+		width: 30%;
+	}
+	.col-w-35{
+		width: 35%;
+	}
+	.col-w-40{
+		width: 40%;
+	}
+	.col-w-45{
+		width: 45%;
+	}
+	.col-w-50{
+		width: 50%;
+	}
+	.col-w-55{
+		width: 55%;
+	}
+	.col-w-60{
+		width: 60%;
+	}
+	.col-w-65{
+		width: 65%;
+	}
+	.col-w-80{
+		width: 80%;
+	}
+	.col-w-90{
+		width: 90%;
+	}
+	.col-w-100{
+		width: 100%;
+	}
+	.f-left{
+		float: left;
+	}
+
+	.f-right{
+		float: right;
+	}
+
+	.text-center{
+		text-align: center;
+	}
+	.text-end{
+		text-align: end;
+	}
+
+	.ly-boder{
+		border : 1px solid #eee;
+	}
+	.ly-border-r{
+		border-right : 1px solid #eee;
+	}
+	.ly-border-b{
+		border-bottom: 1px solid #eee;
+	}
+	.ly-border-t{
+		border-top : 1px solid #eee;
+	}
+	.ly-border-dotbtm{
+		border-bottom: 1px dotted #eee;
+
+	}
+	.ly-border-dotted-top{
+		@extend .ly-border-t;
+		border-top-style: dotted;
+	}
+	.btn-icon{
+		font-weight: bold;
+	    font-size: 200%;
+	    top: -7%;
+	}
+	 .btn-active{
+ 	    background-color: rgb(204, 204, 204);
+	 }
+	.btn-icon-mid{
+		position: relative;
+	    top: -0.05em;
+	    margin: 0 .2em;
+	    vertical-align: middle;
+	}
+
+	.prev-icon{
+		@extend .btn-icon-mid;
+	    top: -0.3em;
+	    &:after {
+	    	content: "\02039";
+		    @extend .btn-icon;
+		}
+	}
+	.next-icon{
+		@extend .btn-icon-mid;
+	    top: -0.3em;
+	    &:after {
+    	    content: "\0203A";
+    	     @extend .btn-icon;
+		}
+	}
+
+	@include el('body'){
+		margin-top: 16px;	
+	}
+}
+
+@include block('week'){
+	@include el('day-number'){
+
+	}
+	@include el('day-content'){
+		
+	}
+}

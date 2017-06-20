@@ -88,6 +88,7 @@
 							ctrl.middleHeading = currentMonthDayHeading(val);
 						}else if(val == _default.agenda.month){
 							ctrl.middleHeading = currentMonthDayHeading(val);
+							ctrl.monthDaysData = getMonthDays(_default.viewMonth);
 						}else if(val == _default.agenda.week){
 							ctrl.weekDaysData = getWeekDayHeadData();
 						}
@@ -156,6 +157,7 @@
 												'{{week}}'+
 											'</div>'+
 										'</div>';
+						isCureentMonthView();
 						templateHead = templateHead + provideMonthHTML();
 
 					}else if(view == _default.agenda.day){
@@ -231,6 +233,7 @@
 					if(ctrl.isActivePeriod == _default.agenda.month){
 						// do with month
 						_default.viewMonth = _default.viewMonth + (val);
+						_default.viewDate = 1;
 						isCureentMonthView();
 						ctrl.middleHeading = currentMonthDayHeading(ctrl.isActivePeriod, _default.viewMonth) ;
 						ctrl.monthDaysData = getMonthDays(_default.viewMonth);
@@ -354,8 +357,8 @@
 				function getWeekDayHeadData(month, date) {
 					var weeks = [];
 					var display = null;
-					date = date ? date : moment().date();
-					month = month ? month : moment().month();
+					date = date ? date : _default.viewDate;
+					month = month ? month : _default.viewMonth;
 					var dayIndex = getDayIndex(month, date);
 					var dateMonth = month;
 					var year = _default.viewYear;

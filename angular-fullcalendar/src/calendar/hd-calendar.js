@@ -75,6 +75,7 @@
 					gotoDaysView : updateViewOnDay,
 					addEvent : addUserEvent,
 					eventEdit : editEvent,
+					viewDayDateIsCurr : false,
 					leftbtnAction : function (dir) {
 						
 						if(dir == 'next'){
@@ -90,6 +91,7 @@
 							ctrl.dayTimeData = getDayTimeData();
 							ctrl.dayHeading = getDayOfDate(_default.viewMonth, _default.viewDate);
 							ctrl.middleHeading = currentMonthDayHeading(val);
+							isCurrentMonthDate();
 						}else if(val == _default.agenda.month){
 							ctrl.middleHeading = currentMonthDayHeading(val);
 							ctrl.monthDaysData = getMonthDays(_default.viewMonth);
@@ -171,8 +173,8 @@
 
 						templateHead = '<thead class="ly-boder ly-pad-tb-4">'+
 											'<tr>'+
-												'<th class="ly-inline-block ly-border-r" style="width: 6%">&nbsp;</th>'+
-												'<th class="text-center ly-inline-block ly-f-16" style="width:93%">{{ctrl.dayHeading}}</th>'+
+												'<th class="ly-border-r" style="width: 6%">&nbsp;</th>'+
+												'<th class="text-center ly-f-16" style="width:93%">{{ctrl.dayHeading}}</th>'+
 											'</tr>'
 										'</thead>';
 						templateHead = templateHead + provideDayHTML();
@@ -204,7 +206,7 @@
 										'<td class="ly-table__td" ng-repeat="date in dateSlots track by $index"  ng-click="ctrl.addEvent(date.date, date.month, $event)" '+
 										'ng-class="(ctrl.today == date.date && ctrl.isCurrMonth) ? \'ly-highlight-today\' : \' \'"  style="height:'+heightOfBox+';">'+
 										'<div class="week__day-number date-{{$index}} text-end">'+
-											'<span class="ly-hover-underline" ng-class="date.isViewMonthDate ? \'\': \'ly-color-light-grey\'" ng-click="ctrl.gotoDaysView(date.date)">{{date.date}}</span>'+
+											'<span class="ly-hover-underline" ng-class="date.isViewMonthDate ? \'\': \'ly-color-light-grey\'" ng-click="ctrl.gotoDaysView(date.date, date.month)">{{date.date}}</span>'+
 										'</div>'+
 										'<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize" ng-repeat="event in date.event" ng-class="event.value ? \'ly-event-bg-color ly-event\' : \'\'"><span>{{event.value}}</span></div>'+
 										'</td>'+
@@ -218,7 +220,8 @@
 					var dayArr = [];
 					var firstDateDayInMonth = moment().month(month).date(1).weekday();
 					var daysInCurrMonth = moment().month(month).daysInMonth();
-					var prevMonth = month - 1;
+					var prevMonth = isValidMonth(month - 1) ? (month - 1) : getValidMonthNumber(month - 1); // check valid month , if not return valid month;
+					var nextMonth = isValidMonth(month + 1) ? (month + 1) : getValidMonthNumber(month + 1)  // check valid month , if not return valid month;
 					var noOfDaysInPrevMonth = moment().month(prevMonth).daysInMonth();
 					var day = 1;
 					var monthDaysFormat = [];
@@ -235,7 +238,8 @@
 								dateObj = {
 									date : 	day,
 									isViewMonthDate : true,
-									event : _default.eventAdd[day]
+									event : _default.eventAdd[day],
+									month : month
 								};
 								dayArr[i] = dateObj;
 								monthDaysFormat[index][m] = dateObj;
@@ -247,7 +251,8 @@
 								dateObj = {
 									date : datePrev,
 									isViewMonthDate : false,
-									event : _default.eventAdd[datePrev]
+									event : _default.eventAdd[datePrev],
+									month : prevMonth,
 								};
 								monthDaysFormat[index][firstDateDayInMonth - i - 1] = dateObj;
 								dayArr[firstDateDayInMonth - i - 1] = dateObj;
@@ -255,7 +260,8 @@
 								dateObj = {
 									date : 	(i - day),
 									isViewMonthDate : false,
-									event : _default.eventAdd[(i - day)]
+									event : _default.eventAdd[(i - day)],
+									month : nextMonth,
 								};
 								dayArr[i] = dateObj;
 								monthDaysFormat[index][m] = dateObj;
@@ -263,42 +269,20 @@
 							i++;
 						}
 					}
-					// for(var i=0; i<_default.numberOfBoxMonth; i++){
-					// 	
-					// 	if((startDayOfCurrMonth <= i) && (day <= daysInCurrMonth)){
-					// 		dateObj = {
-					// 			date : 	day,
-					// 			isViewMonthDate : true,
-					// 			event : _default.eventAdd[day]
-					// 		};
-					// 		dayArr[i] = dateObj;
-					// 		if(day++ && (day > daysInCurrMonth)){
-					// 			day = i;
-					// 		}
-					// 	}else if(i < startDayOfCurrMonth){
-					// 		var datePrev = noOfDaysInPrevMonth--
-					// 		dateObj = {
-					// 			date : datePrev,
-					// 			isViewMonthDate : false,
-					// 			event : _default.eventAdd[datePrev]
-					// 		};
-					// 		dayArr[startDayOfCurrMonth - i - 1] = dateObj;
-					// 	}else {
-					// 		dateObj = {
-					// 			date : 	(i - day),
-					// 			isViewMonthDate : false,
-					// 			event : _default.eventAdd[(i - day)]
-					// 		};
-					// 		dayArr[i] = dateObj;
-					// 	}
-					// }
-
-					return monthDaysFormat;
+					return monthDaysFormat; // 2D arrey to render data for Month dates;
 				}
 
 				function getMonthIsLeapYear(year) {
 					year = year ? year : moment().year();
 					return moment([year]).isLeapYear();
+				}
+
+				function getValidMonthNumber(month){
+					if(month > 11){
+						return (month - 11);
+					}else if(month < 0){
+						return (month + 1);
+					}
 				}
 
 				function renderCalander(val) {
@@ -329,9 +313,17 @@
 						ctrl.dayHeading = getDayOfDate(_default.viewMonth, _default.viewDate);
 						ctrl.middleHeading = currentMonthDayHeading(ctrl.isActivePeriod);
 						_default.viewMonth = _default.dateInfoObject.months;
-						isCureentMonthView();
 						ctrl.monthDaysData = getMonthDays(_default.viewMonth);
+						isCurrentMonthDate();
 					}
+				}
+
+				function isCurrentMonthDate(date, month) {
+					if(isCureentMonthView() && (ctrl.today == _default.viewDate)){
+						ctrl.viewDayDateIsCurr = true;
+					}else{
+						ctrl.viewDayDateIsCurr = false;
+					};
 				}
 
 				// This Section Provide Day rendering for Calander
@@ -343,11 +335,11 @@
 				function provideDayHTML() {
 					var trmplate = '<tbody class="ly-boder">'+
 										'<tr class="ly-cal__time" ng-repeat="time in ctrl.dayTimeData track by $index" ng-class="time.value ?\'ly-border-t\' : \'ly-border-dotted-top\'">'+
-											'<td>'+
-												'<div class="ly-border-r" style="width:6%;" >'+
-													'{{time.value ? time.value : "&nbsp;"}}'+
-												'</div>'+
-												'<div style="width:100%;"></div>'+
+											'<td class="ly-border-r">'+
+												'{{time.value ? time.value : "&nbsp;"}}'+
+											'</td>'+
+											'<td ng-click="ctrl.addEvent(null, null, $event)" class="ly-table__day-td " ng-class="ctrl.viewDayDateIsCurr ? \'ly-highlight-today\' : \' \'" >'+
+												// '<div class="ly-inline-block ly-table__day-td--event" style="width:90%;"></div>'+
 											'</td>'+
 										'</tr>'+
 									'</tbody>';
@@ -371,14 +363,13 @@
 						minsSlots = 0;
 						startHrs = startHrs + 1;
 					}
-
 					return dayTime;
 				}
 
-				function updateViewOnDay(date) {
+				function updateViewOnDay(date, month) {
 					console.log(date);
 					_default.viewDate = date;
-					//ctrl.isActivePeriod = "Day";
+					_default.viewMonth = month;
 					ctrl.rightBtnAction("Day")
 				}
 
@@ -449,6 +440,7 @@
 					var monthBeforeIndex = month;
 					var noOfDaysInMonth = moment().month(month).daysInMonth();
 					for(var index=0; index<7; index++){
+						var isCurrMonthDate = false;
 						if(index < dayIndex){
 							
 							if((date - index - 1) >= 0){
@@ -461,19 +453,27 @@
 								dateBeforeIndex = moment().month(month).daysInMonth();
 							}
 							var indexOfDate = getDayIndex(month, dateBeforeIndex);
+							if(isCureentMonthView() && (ctrl.today == dateBeforeIndex)){
+								isCurrMonthDate = true;
+							}
 							display = {
 								'value' : weekdaysShort[indexOfDate] + ' ' + getDateDateFormated(month, dateBeforeIndex),
 								'month' : month,
 								'date' : dateBeforeIndex,
-								'year' : year
+								'year' : year,
+								'isCurrMonthDate' : isCurrMonthDate
 							};
 							weeks[indexOfDate] = display;
 						}else if(index == dayIndex){
+							if(isCureentMonthView() && (ctrl.today == date)){
+								isCurrMonthDate = true;
+							}
 							display = {
 								'value' : weekdaysShort[dayIndex] + ' ' + getDateDateFormated(month, date),
 								'month' : dateMonth,
 								'date' : date,
-								'year' : year
+								'year' : year,
+								'isCurrMonthDate' : isCurrMonthDate
 							};
 							weeks[dayIndex] = display;
 						}else{
@@ -489,11 +489,15 @@
 								dateAfterIndex = 1;
 							}
 							var indexOfDate = getDayIndex(monthAfterIndex, dateAfterIndex);
+							if(isCureentMonthView() && (ctrl.today == dateAfterIndex)){
+								isCurrMonthDate = true;
+							}
 							display = {
 								'value' : weekdaysShort[indexOfDate] + ' ' + getDateDateFormated(monthAfterIndex, dateAfterIndex),
 								'month' : monthAfterIndex,
 								'date' : dateAfterIndex,
-								'year' : year
+								'year' : year,
+								'isCurrMonthDate' : isCurrMonthDate
 							};
 							weeks[indexOfDate] = display;
 						}
@@ -551,7 +555,8 @@
 											'<td class="ly-border-r" style="width:7%;">'+
 												'{{time.value ? time.value : "&nbsp;"}}'+
 											'</td>'+
-											'<td ng-repeat="week in ctrl.weekDaysData" ng-class="$last ? \'\' : \'ly-border-r\'">'+
+											'<td ng-repeat="week in ctrl.weekDaysData" ng-click="ctrl.addEvent(week.date, week.month, $event)"'+
+												' ng-class="{\'ly-highlight-today\': week.isCurrMonthDate, \'ly-border-r\' : !$last}">'+
 												'<div style="width:13%;">'+
 												'</div>'+
 											'</td>'+
@@ -569,7 +574,7 @@
 						return;
 					}
 					var currTarget = $event.currentTarget;
-					var template = $compile('<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize ly-event-bg-color ly-event"><span>'+result+'</span></div>')($scope);
+					var template = $compile('<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize ly-event-bg-color ly-event ly-text-ellipsis"><span>'+result+'</span></div>')($scope);
 					$(currTarget).append(template);
 					if(!_default.eventAdd[date]){
 						_default.eventAdd[date] = [];

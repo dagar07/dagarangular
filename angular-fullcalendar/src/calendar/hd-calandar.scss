@@ -25,13 +25,19 @@
 	}
 
 	.ly-highlight-today{
-	    background-color: #FFE699;
+	    background-color: rgba(255, 230, 153, 0.25);
 	}
 	.ly-pad-tb-4{
 		padding: 4px 0;
 	}
 	.ly-text-captilize{
 		text-transform: capitalize;
+	}
+	.ly-text-ellipsis{
+	    white-space: nowrap;
+	    overflow: hidden;
+	    text-overflow: ellipsis;
+	    box-sizing: border-box;
 	}
 	.ly-event-bg-color{
 		background-color: #c2ebf1;
@@ -198,4 +204,20 @@
 	    border-color: #ddd;
 	    border-collapse: collapse;
     }
+
+    @include el('day-td'){
+    	position: relative;
+
+    	@include mod('event'){
+		    position: absolute;
+		    width: 94%;
+		    top: 0;
+		    font-size: 12px;
+		    border-radius: 3px;
+		    padding: 3px;
+		    background-color: rgba(255, 0, 0, 0.26);
+    	}
+    }
+
+
 }

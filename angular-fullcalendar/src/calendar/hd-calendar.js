@@ -3,7 +3,7 @@
 	var isArray = angular.isArray;
 	var forEach = angular.forEach;
 	var isString = angular.isString;
-	var $ = angular.element;
+	var $ = angular.element; // use for JqLit;
 
 	angular.module("lyCalendar", ["ng"]);
 	angular.module("lyCalendar")
@@ -169,21 +169,24 @@
 
 					}else if(view == _default.agenda.day){
 
-						templateHead = '<div class="ly-boder ly-pad-tb-4">'+
-											'<div class="ly-inline-block ly-border-r" style="width: 6%">&nbsp;</div>'+
-											'<div class="text-center ly-inline-block ly-f-16" style="width:93%">{{ctrl.dayHeading}}</div>'+
-										'</div>';
+						templateHead = '<thead class="ly-boder ly-pad-tb-4">'+
+											'<tr>'+
+												'<th class="ly-inline-block ly-border-r" style="width: 6%">&nbsp;</th>'+
+												'<th class="text-center ly-inline-block ly-f-16" style="width:93%">{{ctrl.dayHeading}}</th>'+
+											'</tr>'
+										'</thead>';
 						templateHead = templateHead + provideDayHTML();
 						
 					}else if(view == _default.agenda.week){
 						// template Head on rendering year Head.
-						templateHead = '<div class="ly-boder text-center ly-pad-tb-4">'+
-											'<div class="ly-inline-block ly-border-r" style="width: 6%">&nbsp;</div>'+
-											'<div class="ly-inline-block" style="width:13%;"'+
-											'" ng-repeat="week in ctrl.weekDaysData" ng-class="$last ? \'\' : \'ly-border-r\'">'+
+						templateHead = '<thead class="ly-boder text-center ly-pad-tb-4">'+
+											'<tr>'+
+												'<th class="ly-border-r" style="width: 6%">&nbsp;</th>'+
+												'<th style="width:13%;" ng-repeat="week in ctrl.weekDaysData" ng-class="$last ? \'\' : \'ly-border-r\'">'+
 												'{{week.value}}'+
-											'</div>'+
-										'</div>';
+												'</th>'+
+											'</tr>'
+										'</thead>';
 						templateHead = templateHead + provideWeekDayHTML();
 
 					}
@@ -338,14 +341,16 @@
 				}
 
 				function provideDayHTML() {
-					var trmplate = '<div class="ly-boder">'+
-										'<div class="ly-cal__time" ng-repeat="time in ctrl.dayTimeData track by $index">'+
-											'<div class="ly-border-r ly-inline-block" style="width:6%;" ng-class="time.value ?\'ly-border-t\' : \'ly-border-dotted-top\'">'+
-												'{{time.value}}'+
-											'</div>'+
-											'<div ng-class="time.value ?\'ly-border-dotbtm\' : \'ly-border-dotted-top\'" style="width:100%;"></div>'+
-										'</div>'+
-									'</div>';
+					var trmplate = '<tbody class="ly-boder">'+
+										'<tr class="ly-cal__time" ng-repeat="time in ctrl.dayTimeData track by $index" ng-class="time.value ?\'ly-border-t\' : \'ly-border-dotted-top\'">'+
+											'<td>'+
+												'<div class="ly-border-r" style="width:6%;" >'+
+													'{{time.value ? time.value : "&nbsp;"}}'+
+												'</div>'+
+												'<div style="width:100%;"></div>'+
+											'</td>'+
+										'</tr>'+
+									'</tbody>';
 					return trmplate;
 				}
 
@@ -541,18 +546,17 @@
 				// }
 
 				function provideWeekDayHTML() {
-					var template = '<div class="ly-boder">'+
-										'<div class="ly-cal__time" ng-repeat="time in ctrl.dayTimeData track by $index">'+
-											'<div class="ly-border-r ly-inline-block" style="width:7%;" ng-class="time.value ?\'ly-border-t\' : \'ly-border-dotted-top\'">'+
-												'{{time.value}}'+
-											'</div>'+
-											'<div ng-class="time.value ?\'ly-border-dotbtm\' : \'ly-border-dotted-top\'">'+
-												'<div class="ly-inline-block" style="width:13%;"'+
-												'" ng-repeat="week in ctrl.weekDaysData" ng-class="$last ? \'\' : \'ly-border-r\'">'+
+					var template = '<tbody class="ly-boder">'+
+										'<tr class="ly-cal__time" ng-repeat="time in ctrl.dayTimeData track by $index" ng-class="time.value ?\'ly-border-t\' : \'ly-border-dotted-top\'">'+
+											'<td class="ly-border-r" style="width:7%;">'+
+												'{{time.value ? time.value : "&nbsp;"}}'+
+											'</td>'+
+											'<td ng-repeat="week in ctrl.weekDaysData" ng-class="$last ? \'\' : \'ly-border-r\'">'+
+												'<div style="width:13%;">'+
 												'</div>'+
-											'</div>'+
-										'</div>'+
-									'</div>';
+											'</td>'+
+										'</tr>'+
+									'</tbody>';
 					return template;
 				}
 
@@ -561,6 +565,9 @@
 				function addUserEvent(date, month, $event) {
 					var message = "Please enter event title";
 					var result = window.prompt(message, "e.g meeting..");
+					if(!result){
+						return;
+					}
 					var currTarget = $event.currentTarget;
 					var template = $compile('<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize ly-event-bg-color ly-event"><span>'+result+'</span></div>')($scope);
 					$(currTarget).append(template);

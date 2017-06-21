@@ -157,12 +157,13 @@
 					var templateHead = null;
 					if(view == _default.agenda.month){
 						var subHeadWidth = parseInt(100/(_default.weeks.length)) + '%';
-						templateHead = '<div class="ly-boder text-center ly-pad-tb-4">'+
-											'<div class="ly-inline-block" style="width:'+subHeadWidth+
-											'" ng-repeat="week in ctrl.monthWeeks" ng-class="$last ? \'\' : \'ly-border-r\'">'+
-												'{{week}}'+
-											'</div>'+
-										'</div>';
+						templateHead = '<thead class="ly-boder">'+
+											'<tr>'+
+												'"<th ng-repeat="week in ctrl.monthWeeks" ng-class="$last ? \'\' : \'ly-border-r\'">'+
+													'<span>{{week}}</span>'+
+												'</th>'+
+											'</tr>'+
+										'</thead>';
 						isCureentMonthView();
 						templateHead = templateHead + provideMonthHTML();
 
@@ -186,6 +187,7 @@
 						templateHead = templateHead + provideWeekDayHTML();
 
 					}
+					templateHead = '<table class="ly-table">'+ templateHead + '</table>'
 					templateHead = $compile(templateHead)($scope);
 					$(document.getElementsByClassName(_default.bodyContainerClass)).html('');
 					$(document.getElementsByClassName(_default.bodyContainerClass)).prepend(templateHead);
@@ -194,60 +196,101 @@
 				function provideMonthHTML(val) {
 					var heightOfBox = '70px';//parseInt(100/(_default.weeks.length)) + '%';
 					var widthOfBox = parseInt(100/(_default.weeks.length)) + '%';
-					var boxHTML = '<div class="week">'+
-									'<div ng-click="ctrl.addEvent(date.date)" class="ly-inline-block ly-cursor-ponter ly-boder" ng-repeat="date in ctrl.monthDaysData track by $index" '+
-										'ng-class="(ctrl.today == date.date && ctrl.isCurrMonth) ? \'ly-highlight-today\' : \' \'"  style="height:'+heightOfBox+';width:'+widthOfBox+'">'+
+					var boxHTML = '<tbody class="week">'+
+									'<tr class="ly-cursor-ponter ly-boder" ng-repeat="dateSlots in ctrl.monthDaysData track by $index">'+
+										'<td class="ly-table__td" ng-repeat="date in dateSlots track by $index"  ng-click="ctrl.addEvent(date.date, date.month, $event)" '+
+										'ng-class="(ctrl.today == date.date && ctrl.isCurrMonth) ? \'ly-highlight-today\' : \' \'"  style="height:'+heightOfBox+';">'+
 										'<div class="week__day-number date-{{$index}} text-end">'+
 											'<span class="ly-hover-underline" ng-class="date.isViewMonthDate ? \'\': \'ly-color-light-grey\'" ng-click="ctrl.gotoDaysView(date.date)">{{date.date}}</span>'+
 										'</div>'+
 										'<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize" ng-repeat="event in date.event" ng-class="event.value ? \'ly-event-bg-color ly-event\' : \'\'"><span>{{event.value}}</span></div>'+
-									'</div>'+
-								'</div>';
+										'</td>'+
+									'</tr>'+
+								'</tbody>';
 					return boxHTML;
 				}
 
 				function getMonthDays(month) {
 					month = month ? month : moment().month();
 					var dayArr = [];
-					var startDayOfCurrMonth = moment().month(month).date(1).weekday();
+					var firstDateDayInMonth = moment().month(month).date(1).weekday();
 					var daysInCurrMonth = moment().month(month).daysInMonth();
 					var prevMonth = month - 1;
 					var noOfDaysInPrevMonth = moment().month(prevMonth).daysInMonth();
 					var day = 1;
-					for(var i=0; i<_default.numberOfBoxMonth; i++){
-						var dateObj = {
-							date : null,
-							isViewMonthDate : true,
-						};
-						if((startDayOfCurrMonth <= i) && (day <= daysInCurrMonth)){
-							dateObj = {
-								date : 	day,
-								isViewMonthDate : true,
-								event : _default.eventAdd[day]
-							};
-							dayArr[i] = dateObj;
-							if(day++ && (day > daysInCurrMonth)){
-								day = i;
+					var monthDaysFormat = [];
+					monthDaysFormat[0] = [];
+					var dateObj = {
+						date : null,
+						isViewMonthDate : true,
+					};
+					var i = 0;
+					for(var index = 0; index<6; index++){
+						monthDaysFormat[index] = [];
+						for(var m=0; m<7; m++){
+							if((firstDateDayInMonth <= i) && (day <= daysInCurrMonth)){
+								dateObj = {
+									date : 	day,
+									isViewMonthDate : true,
+									event : _default.eventAdd[day]
+								};
+								dayArr[i] = dateObj;
+								monthDaysFormat[index][m] = dateObj;
+								if(day++ && (day > daysInCurrMonth)){
+									day = i;
+								}
+							}else if(i < firstDateDayInMonth){
+								var datePrev = noOfDaysInPrevMonth--
+								dateObj = {
+									date : datePrev,
+									isViewMonthDate : false,
+									event : _default.eventAdd[datePrev]
+								};
+								monthDaysFormat[index][firstDateDayInMonth - i - 1] = dateObj;
+								dayArr[firstDateDayInMonth - i - 1] = dateObj;
+							}else {
+								dateObj = {
+									date : 	(i - day),
+									isViewMonthDate : false,
+									event : _default.eventAdd[(i - day)]
+								};
+								dayArr[i] = dateObj;
+								monthDaysFormat[index][m] = dateObj;
 							}
-						}else if(i < startDayOfCurrMonth){
-							var datePrev = noOfDaysInPrevMonth--
-							dateObj = {
-								date : datePrev,
-								isViewMonthDate : false,
-								event : _default.eventAdd[datePrev]
-							};
-							dayArr[startDayOfCurrMonth - i - 1] = dateObj;
-						}else {
-							dateObj = {
-								date : 	(i - day),
-								isViewMonthDate : false,
-								event : _default.eventAdd[(i - day)]
-							};
-							dayArr[i] = dateObj;
+							i++;
 						}
 					}
+					// for(var i=0; i<_default.numberOfBoxMonth; i++){
+					// 	
+					// 	if((startDayOfCurrMonth <= i) && (day <= daysInCurrMonth)){
+					// 		dateObj = {
+					// 			date : 	day,
+					// 			isViewMonthDate : true,
+					// 			event : _default.eventAdd[day]
+					// 		};
+					// 		dayArr[i] = dateObj;
+					// 		if(day++ && (day > daysInCurrMonth)){
+					// 			day = i;
+					// 		}
+					// 	}else if(i < startDayOfCurrMonth){
+					// 		var datePrev = noOfDaysInPrevMonth--
+					// 		dateObj = {
+					// 			date : datePrev,
+					// 			isViewMonthDate : false,
+					// 			event : _default.eventAdd[datePrev]
+					// 		};
+					// 		dayArr[startDayOfCurrMonth - i - 1] = dateObj;
+					// 	}else {
+					// 		dateObj = {
+					// 			date : 	(i - day),
+					// 			isViewMonthDate : false,
+					// 			event : _default.eventAdd[(i - day)]
+					// 		};
+					// 		dayArr[i] = dateObj;
+					// 	}
+					// }
 
-					return dayArr;
+					return monthDaysFormat;
 				}
 
 				function getMonthIsLeapYear(year) {
@@ -518,6 +561,9 @@
 				function addUserEvent(date, month, $event) {
 					var message = "Please enter event title";
 					var result = window.prompt(message, "e.g meeting..");
+					var currTarget = $event.currentTarget;
+					var template = $compile('<div ng-click="ctrl.eventEdit(event, $event)" class="week__day-content ly-text-captilize ly-event-bg-color ly-event"><span>'+result+'</span></div>')($scope);
+					$(currTarget).append(template);
 					if(!_default.eventAdd[date]){
 						_default.eventAdd[date] = [];
 					}
